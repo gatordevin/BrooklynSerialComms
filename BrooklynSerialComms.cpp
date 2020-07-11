@@ -10,6 +10,7 @@ BrooklynSerialComms::BrooklynSerialComms(unsigned int baud, short watchdog_timer
     _data_length_errors = 0;
     _watchdog_errors = 0;
     _starting_pos = 0;
+    _send_starting_pos = 0;
 }
 
 void BrooklynSerialComms::begin()
@@ -28,7 +29,7 @@ float BrooklynSerialComms::read_float()
     return four_byte_converter.fval;
 }
 
-unsigned int BrooklynSerialComms::read_unsigned_int(){
+unsigned long BrooklynSerialComms::read_unsigned_int(){
     four_byte_converter.b[0] = recv_packet.data[0+_starting_pos];
     four_byte_converter.b[1] = recv_packet.data[1+_starting_pos];
     four_byte_converter.b[2] = recv_packet.data[2+_starting_pos];
@@ -37,7 +38,7 @@ unsigned int BrooklynSerialComms::read_unsigned_int(){
     return four_byte_converter.uival;
 }
 
-int BrooklynSerialComms::read_int(){
+long BrooklynSerialComms::read_int(){
     four_byte_converter.b[0] = recv_packet.data[0+_starting_pos];
     four_byte_converter.b[1] = recv_packet.data[1+_starting_pos];
     four_byte_converter.b[2] = recv_packet.data[2+_starting_pos];
@@ -86,6 +87,112 @@ unsigned long long BrooklynSerialComms::read_unsigned_long_long(){
     return eight_byte_converter.ulval;
 }
 
+void BrooklynSerialComms::send_int(signed long data){
+    four_byte_converter.ival = data;
+    send_packet.data[0+_send_starting_pos] = four_byte_converter.b[0];
+    send_packet.data[1+_send_starting_pos] = four_byte_converter.b[1];
+    send_packet.data[2+_send_starting_pos] = four_byte_converter.b[2];
+    send_packet.data[3+_send_starting_pos] = four_byte_converter.b[3];
+    _send_starting_pos += 4;
+}
+
+void BrooklynSerialComms::send_unsigned_int(unsigned long data){
+    four_byte_converter.uival = data;
+    send_packet.data[0+_send_starting_pos] = four_byte_converter.b[0];
+    send_packet.data[1+_send_starting_pos] = four_byte_converter.b[1];
+    send_packet.data[2+_send_starting_pos] = four_byte_converter.b[2];
+    send_packet.data[3+_send_starting_pos] = four_byte_converter.b[3];
+    _send_starting_pos += 4;
+}
+
+void BrooklynSerialComms::add(float data){
+    four_byte_converter.fval = data;
+    send_packet.data[0+_send_starting_pos] = four_byte_converter.b[0];
+    send_packet.data[1+_send_starting_pos] = four_byte_converter.b[1];
+    send_packet.data[2+_send_starting_pos] = four_byte_converter.b[2];
+    send_packet.data[3+_send_starting_pos] = four_byte_converter.b[3];
+    _send_starting_pos += 4;
+}
+void BrooklynSerialComms::add(short data){
+    two_byte_converter.sval = data;
+    send_packet.data[0+_send_starting_pos] = two_byte_converter.b[0];
+    send_packet.data[1+_send_starting_pos] = two_byte_converter.b[1];
+    _send_starting_pos += 2;
+}
+void BrooklynSerialComms::add(unsigned long data){
+    four_byte_converter.uival = data;
+    send_packet.data[0+_send_starting_pos] = four_byte_converter.b[0];
+    send_packet.data[1+_send_starting_pos] = four_byte_converter.b[1];
+    send_packet.data[2+_send_starting_pos] = four_byte_converter.b[2];
+    send_packet.data[3+_send_starting_pos] = four_byte_converter.b[3];
+    _send_starting_pos += 4;
+}
+
+void BrooklynSerialComms::add(long data){
+    four_byte_converter.ival = data;
+    send_packet.data[0+_send_starting_pos] = four_byte_converter.b[0];
+    send_packet.data[1+_send_starting_pos] = four_byte_converter.b[1];
+    send_packet.data[2+_send_starting_pos] = four_byte_converter.b[2];
+    send_packet.data[3+_send_starting_pos] = four_byte_converter.b[3];
+    _send_starting_pos += 4;
+}
+
+void BrooklynSerialComms::add(unsigned short data){
+    two_byte_converter.usval = data;
+    send_packet.data[0+_send_starting_pos] = two_byte_converter.b[0];
+    send_packet.data[1+_send_starting_pos] = two_byte_converter.b[1];
+    _send_starting_pos += 2;
+}
+void BrooklynSerialComms::add(long long data){
+    eight_byte_converter.lval = data;
+    send_packet.data[0+_send_starting_pos] = eight_byte_converter.b[0];
+    send_packet.data[1+_send_starting_pos] = eight_byte_converter.b[1];
+    send_packet.data[2+_send_starting_pos] = eight_byte_converter.b[2];
+    send_packet.data[3+_send_starting_pos] = eight_byte_converter.b[3];
+    send_packet.data[4+_send_starting_pos] = eight_byte_converter.b[4];
+    send_packet.data[5+_send_starting_pos] = eight_byte_converter.b[5];
+    send_packet.data[6+_send_starting_pos] = eight_byte_converter.b[6];
+    send_packet.data[7+_send_starting_pos] = eight_byte_converter.b[7];
+    _send_starting_pos += 8;
+}
+void BrooklynSerialComms::add(unsigned long long data){
+    eight_byte_converter.ulval = data;
+    send_packet.data[0+_send_starting_pos] = eight_byte_converter.b[0];
+    send_packet.data[1+_send_starting_pos] = eight_byte_converter.b[1];
+    send_packet.data[2+_send_starting_pos] = eight_byte_converter.b[2];
+    send_packet.data[3+_send_starting_pos] = eight_byte_converter.b[3];
+    send_packet.data[4+_send_starting_pos] = eight_byte_converter.b[4];
+    send_packet.data[5+_send_starting_pos] = eight_byte_converter.b[5];
+    send_packet.data[6+_send_starting_pos] = eight_byte_converter.b[6];
+    send_packet.data[7+_send_starting_pos] = eight_byte_converter.b[7];
+    _send_starting_pos += 8;
+}
+
+void BrooklynSerialComms::send(int destination_id){
+    send_packet.header = 255;
+    send_packet.destination_id = destination_id;
+    send_packet.sender_id = 1;
+    send_packet.packet_id = recv_packet.packet_id;
+    send_packet.command = 7;
+    send_packet.data_length = _send_starting_pos;
+    send_packet.checksum = calc_checksum(send_packet);
+    send_full_packet();
+}
+
+signed long BrooklynSerialComms::calc_checksum(packet data_packet){
+    signed long check = 0;
+    check += data_packet.header;
+    check += data_packet.destination_id;
+    check += data_packet.sender_id;
+    check += data_packet.packet_id;
+    check += data_packet.command;
+    check += data_packet.data_length;
+    for(int i=0; i<data_packet.data_length; i++){
+        check += data_packet.data[i];
+    }
+    return check;
+}
+
 void BrooklynSerialComms::close(void(*end_comms_handler)()){
     _data_length_errors = 0;
     _packets_recieved = 0;
@@ -96,6 +203,7 @@ void BrooklynSerialComms::close(void(*end_comms_handler)()){
 
 void BrooklynSerialComms::send_full_packet()
 {
+    _send_starting_pos = 0;
     byte* byte_array = reinterpret_cast<byte*>(&send_packet);
     if(Serial.availableForWrite()>sizeof(packet)-sizeof(send_packet.data)){
         Serial.write(byte_array, sizeof(packet)-sizeof(send_packet.data)+send_packet.data_length);

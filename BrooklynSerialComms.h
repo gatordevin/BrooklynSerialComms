@@ -22,8 +22,8 @@ struct packet
 union four_byte_conv {
     byte b[4];
     float fval;
-    unsigned int uival;
-    int ival;
+    unsigned long uival;
+    signed long ival;
 };
 
 union two_byte_conv {
@@ -49,6 +49,7 @@ class BrooklynSerialComms
     unsigned int _checksum_errors;
     unsigned int _watchdog_errors;
     unsigned short _starting_pos;
+    unsigned short _send_starting_pos;
 
     public:
         
@@ -58,13 +59,33 @@ class BrooklynSerialComms
         void send_byte(byte value, byte destination_id);
         void send_metrics(byte destination_id);
         void close(void(*end_comms_handler)());
+
         float read_float();
-        unsigned int read_unsigned_int();
-        int read_int();
+        unsigned long read_unsigned_int();
+        long read_int();
         unsigned short read_unsigned_short();
         short read_short();
         long long read_long_long();
         unsigned long long read_unsigned_long_long();
+
+        void send_float();
+        void send_unsigned_int(unsigned long data);
+        void send_int(signed long data);
+        void send_unsigned_short();
+        void send_short();
+        void send_long_long();
+        void send_unsigned_long_long();
+
+        void add(float data);
+        void add(long data);
+        void add(short data);
+        void add(unsigned long data);
+        void add(unsigned short data);
+        void add(long long data);
+        void add(unsigned long long data);
+
+        void send(int destination_id);
+
         int check_for_conn(unsigned short handshake_byte);
         void check_for_data(void(*on_data_callback)(packet data), void(*no_data_callback)(), void(*watchdog_handler)());
         packet recv_packet;
@@ -76,4 +97,5 @@ class BrooklynSerialComms
     private:
         int _last_recv_time;
         int _current_time;
+        signed long calc_checksum(packet data_packet);
 };
